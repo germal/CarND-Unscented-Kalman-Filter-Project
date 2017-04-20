@@ -1,3 +1,9 @@
+/*______________________________________________________________________________
+                                                                           80->|
+  ukf.h
+  This module defines the UKF class
+*/
+
 #ifndef UKF_H
 #define UKF_H
 
@@ -12,7 +18,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class UKF {
-public:
+ public:
 
   ///* initially set to false, set to true in first call of ProcessMeasurement
   bool is_initialized_;
@@ -73,6 +79,21 @@ public:
 
   ///* the current NIS for laser
   double NIS_laser_;
+  
+  //+
+  long long previous_timestamp_;
+  
+  //+ Process noise matrices
+  int n_z_radar_;
+  int n_z_laser_;
+  MatrixXd  R_laser_;
+  MatrixXd  R_radar_;
+  
+  //+ Aug state and covariance
+  int n_sig_;
+  VectorXd x_aug_;
+  MatrixXd P_aug_;
+  MatrixXd Xsig_aug_;
 
   /**
    * Constructor
@@ -108,6 +129,11 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+ private:
+  void PredictSigmaPoints(double);
+  VectorXd PredictColumn(VectorXd&, double);
+  void PredictMeanAndCovariance();
 };
 
 #endif /* UKF_H */
